@@ -1,12 +1,18 @@
 import { isNewLine } from './utils/is'
-
+import { tokenTypes } from './utils/types'
 // 词法分析阶段
 class Token {
   private type: string
-  private value: string | Object
-  constructor(type: string, value: string | Object) {
+  private value?: string | Object
+  constructor(type: string, value?: string | Object) {
     this.type = type
     this.value = value
+  }
+  getType() {
+    return this.type
+  }
+  getValue() {
+    return this.value
   }
 }
 
@@ -24,7 +30,6 @@ class TokenParser {
   }
   parseToToken() {
     this._input = '\n' + this._input
-    console.log(this._input.length)
     while (this._pos < this._input.length) {
       if (isNewLine(this.getChar())) {
         this.getNewLineToken()
@@ -106,13 +111,12 @@ class TokenParser {
     this.consume(count + 2)
     let i = this.getChar()
   }
-  getBlockToken() {}
   getNewLineToken() {
     // 合并多个NewLine
     do {
       this.consume()
     } while (isNewLine(this.getChar()))
-    this._tokens.push(new Token('NewLine', 'NewLine'))
+    this._tokens.push(new Token('NewLine'))
 
     if (this.getChar() === '#') {
       this.getHeadToken()
@@ -127,7 +131,7 @@ class TokenParser {
         str += this.getChar()
         this.consume()
       }
-      this._tokens.push(new Token('NormalString', str))
+      this._tokens.push(new Token(tokenTypes.NormalString, str))
       return
     }
     let str = ''
@@ -141,13 +145,12 @@ class TokenParser {
       str += this.getChar()
       this.consume()
     }
-    this._tokens.push(new Token('NormalString', str))
+    this._tokens.push(new Token(tokenTypes.NormalString, str))
   }
-  getLineToken() {}
   consume(pos = 1) {
     // console.log(this.getChar())
     this._pos += pos
   }
 }
 
-export default TokenParser
+export { Token, TokenParser }
