@@ -23,39 +23,26 @@ class TokenParser {
     return this._tokens
   }
   parseToToken() {
-    // console.log(123)
     this._input = '\n' + this._input
     console.log(this._input.length)
     while (this._pos < this._input.length) {
-      let i = this.getChar()
       if (isNewLine(this.getChar())) {
         this.getNewLineToken()
-      }
-      if (this.getChar() === '*') {
+      } else if (this.getChar() === '~') {
+        this.getDeleteToken()
+      } else if (this.getChar() === '*') {
         this.getBoldToken()
+      } else if (this.isEnd()) {
+        break
       } else {
         this.getNormalStringToken()
       }
-      // break
-      // switch(this.getChar()) {
-      //   case '#':
-      //     this.getHeaderToken()
-      //   case '*':
-      //     this.getBoldToken()
-      //   case '~':
-      //     this.getDeleteToken()
-      //   case '\r':
-      //     this.getNewLineToken()
-      //   default :
-      //     this.getNormalStringToken()
-      // }
     }
   }
   getChar(offset = 0) {
     return this._input[this._pos + offset]
   }
   getHeadToken() {
-    // /\r?\n/.test(this.getChar())
     let count = 1
     while (this.getChar(count) === '#') {
       count++
@@ -81,43 +68,48 @@ class TokenParser {
       )
     }
   }
-  isEnd() {
+  isEnd(offset = 0) {
     return this._pos >= this._input.length
   }
   isLast() {
     return this._pos >= this._input.length - 1
   }
   getBoldToken() {
+    this.getDoubleMarkToken('*', 'Bold')
+  }
+  getDeleteToken() {
+    this.getDoubleMarkToken('~', 'Delete')
+  }
+  getDoubleMarkToken(mark: string, tokenType: string) {
+    if (this.getChar(1) !== mark) {
+      this.getNormalStringToken(0, 1)
+      return
+    }
     let str = ''
-    console.log(this.getChar(1))
-    if (this.getChar(1) === '*') {
-      console.log(90)
-      let count = 2
-      console.log(123)
-      while (true) {
-        if (this.isLast()) {
-          return
-        }
-        if (isNewLine(this.getChar(count))) {
-          return
-        }
-        if (this.getChar(count) === '*' && this.getChar(count + 1) === '*') {
-          break
-        }
-        str += this.getChar(count)
-        ++count
-      }
-      if (!str.length) {
+    let count = 2
+    while (true) {
+      if (this._pos + count === this._input.length) {
+        this.getNormalStringToken(0, count)
         return
       }
-      this._tokens.push(new Token('Bold', str))
-      this.consume(count + 2)
+      if (isNewLine(this.getChar(count))) {
+        this.getNormalStringToken(0, count)
+        return
+      }
+      if (this.getChar(count) === mark && this.getChar(count + 1) === mark) {
+        break
+      }
+      str += this.getChar(count)
+      count++
     }
+    this._tokens.push(new Token(tokenType, str))
+    this.consume(count + 2)
+    let i = this.getChar()
   }
+  getBlockToken() {}
   getNewLineToken() {
     // 合并多个NewLine
     do {
-      // debugger
       this.consume()
     } while (isNewLine(this.getChar()))
     this._tokens.push(new Token('NewLine', 'NewLine'))
@@ -126,9 +118,34 @@ class TokenParser {
       this.getHeadToken()
     }
   }
-  getNormalStringToken() {}
+  getNormalStringToken(directStart?: number, directEnd?: number) {
+    if (directStart !== undefined && directEnd !== undefined) {
+      let str = ''
+      let length = directEnd - directStart
+      console.log(length)
+      while (length--) {
+        str += this.getChar()
+        this.consume()
+      }
+      this._tokens.push(new Token('NormalString', str))
+      return
+    }
+    let str = ''
+    let count = 0
+    while (
+      !isNewLine(this.getChar()) &&
+      this.getChar() !== '~' &&
+      this.getChar() !== '*' &&
+      !this.isEnd()
+    ) {
+      str += this.getChar()
+      this.consume()
+    }
+    this._tokens.push(new Token('NormalString', str))
+  }
   getLineToken() {}
   consume(pos = 1) {
+    // console.log(this.getChar())
     this._pos += pos
   }
 }

@@ -3,12 +3,15 @@
 // ...
 import TokenParser from './TokenParser'
 
-let parser = new TokenParser(`
+let str = `
 
-** vhhef * ** **543***
+### sld
+123** vhhef  **  123123 0 s**kdfjlkvd
 
-####  Foo`)
-console.log(123)
+**543**~~吼吼~~k1*`
+
+let parser = new TokenParser(str)
+console.log(str)
 
 parser.parseToToken()
 console.log(parser.getTokens())
