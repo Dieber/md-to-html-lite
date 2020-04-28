@@ -1,26 +1,32 @@
 class BinNode<T> {
-  private data?: T
-  private left?: null | BinNode<T>
-  private right?: null | BinNode<T>
-  constructor(data?: T) {
+  private data: T
+  private left: null | BinNode<T>
+  private right: null | BinNode<T>
+  constructor(data: T) {
     this.data = data
     this.left = null
     this.right = null
   }
+  getLeft() {
+    return this.left
+  }
+  getRight() {
+    return this.right
+  }
+  getData() {
+    return this.data
+  }
   insertAsLeft(data: T) {
-    let leftChild = new BinNode<T>()
-    leftChild.data = data
-    this.left = leftChild
+    return (this.left = new BinNode<T>(data))
   }
   insertAsRight(data: T) {
-    let leftChild = new BinNode<T>()
-    leftChild.data = data
-    this.left = leftChild
+    return (this.right = new BinNode<T>(data))
   }
 }
 
 class BinTree<T> {
   private root: BinNode<T>
+  public count: number = 1
   constructor(data: T) {
     this.root = new BinNode<T>(data)
   }
@@ -28,11 +34,15 @@ class BinTree<T> {
     return this.root
   }
   insertAsLeft(node: BinNode<T>, data: T) {
+    this.count++
     node.insertAsLeft(data)
+    return node
   }
   insertAsRight(node: BinNode<T>, data: T) {
+    this.count++
     node.insertAsRight(data)
+    return node
   }
 }
 
-type Stack<T> = Array<T>
+export { BinNode, BinTree }

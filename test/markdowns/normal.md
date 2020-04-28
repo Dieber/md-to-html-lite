@@ -5,5 +5,3 @@
 23\*\*gdfkljvf
 
 **sdfjk**
-
-shit\*~_\*\*~~_~~

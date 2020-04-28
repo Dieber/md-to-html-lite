@@ -1,16 +1,18 @@
-const tokenTypes = {
-  Bold: 'Bold',
-  NormalString: 'NormalString',
-  NewLine: 'NewLine',
-  Delete: 'Delete'
+enum TokenTypes {
+  Bold,
+  NormalString,
+  NewLine,
+  Delete,
+  Head
 }
 
-const NodeTypes = {
-  RootNode: 'RootNode',
-  Paragraph: 'Paragraph',
-  delete: 'delete',
-  bold: 'bold',
-  span: 'span'
+enum NodeTypes {
+  RootNode,
+  Paragraph,
+  Delete,
+  Bold,
+  Span,
+  Head
 }
 
-export { tokenTypes, NodeTypes }
+export { TokenTypes, NodeTypes }

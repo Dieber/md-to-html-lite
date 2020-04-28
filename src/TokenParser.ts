@@ -1,10 +1,10 @@
 import { isNewLine } from './utils/is'
-import { tokenTypes } from './utils/types'
+import { TokenTypes } from './utils/types'
 // 词法分析阶段
 class Token {
-  private type: string
+  private type: TokenTypes
   private value?: string | Object
-  constructor(type: string, value?: string | Object) {
+  constructor(type: TokenTypes, value?: string | Object) {
     this.type = type
     this.value = value
   }
@@ -66,7 +66,7 @@ class TokenParser {
       }
       // 推入token
       this._tokens.push(
-        new Token('Head', {
+        new Token(TokenTypes.Head, {
           level: count,
           string: str
         })
@@ -80,12 +80,12 @@ class TokenParser {
     return this._pos >= this._input.length - 1
   }
   getBoldToken() {
-    this.getDoubleMarkToken('*', 'Bold')
+    this.getDoubleMarkToken('*', TokenTypes.Bold)
   }
   getDeleteToken() {
-    this.getDoubleMarkToken('~', 'Delete')
+    this.getDoubleMarkToken('~', TokenTypes.Delete)
   }
-  getDoubleMarkToken(mark: string, tokenType: string) {
+  getDoubleMarkToken(mark: string, tokenType: TokenTypes) {
     if (this.getChar(1) !== mark) {
       this.getNormalStringToken(0, 1)
       return
@@ -116,7 +116,7 @@ class TokenParser {
     do {
       this.consume()
     } while (isNewLine(this.getChar()))
-    this._tokens.push(new Token('NewLine'))
+    this._tokens.push(new Token(TokenTypes.NewLine))
 
     if (this.getChar() === '#') {
       this.getHeadToken()
@@ -126,12 +126,11 @@ class TokenParser {
     if (directStart !== undefined && directEnd !== undefined) {
       let str = ''
       let length = directEnd - directStart
-      console.log(length)
       while (length--) {
         str += this.getChar()
         this.consume()
       }
-      this._tokens.push(new Token(tokenTypes.NormalString, str))
+      this._tokens.push(new Token(TokenTypes.NormalString, str))
       return
     }
     let str = ''
@@ -145,7 +144,7 @@ class TokenParser {
       str += this.getChar()
       this.consume()
     }
-    this._tokens.push(new Token(tokenTypes.NormalString, str))
+    this._tokens.push(new Token(TokenTypes.NormalString, str))
   }
   consume(pos = 1) {
     // console.log(this.getChar())
