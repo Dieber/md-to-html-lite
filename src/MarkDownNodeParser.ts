@@ -4,12 +4,12 @@ import { Stack } from './utils/Stack'
 import { BinNode, BinTree } from './utils/Tree'
 // type nodeTypes = typeof NodeTypes
 
-// type Node = {
+// type MarkDownNode = {
 //   type: NodeTypes
 //   data?: Object
 // }
 
-class Node {
+class MarkDownNode {
   private type: NodeTypes
   private value?: Object
   getType() {
@@ -21,15 +21,15 @@ class Node {
   }
 }
 
-class NodeParser {
+class MarkDownNodeParser {
   private token: Array<Token>
-  private tree: BinTree<Node>
-  private stack: Stack<BinNode<Node>>
+  private tree: BinTree<MarkDownNode>
+  private stack: Stack<BinNode<MarkDownNode>>
   constructor(token: Array<Token>) {
     this.token = token
-    let rootNode: Node = new Node(NodeTypes.RootNode)
-    this.tree = new BinTree<Node>(rootNode)
-    this.stack = new Stack<BinNode<Node>>()
+    let rootNode: MarkDownNode = new MarkDownNode(NodeTypes.RootNode)
+    this.tree = new BinTree<MarkDownNode>(rootNode)
+    this.stack = new Stack<BinNode<MarkDownNode>>()
   }
   parseToNode() {
     this.stack.push(this.tree.getRoot())
@@ -43,27 +43,27 @@ class NodeParser {
         if (nodeType === NodeTypes.Paragraph) {
           this.stack.pop()
         }
-        let node = new Node(NodeTypes.Paragraph)
+        let node = new MarkDownNode(NodeTypes.Paragraph)
         let binNode = this.insertNodeToTree(this.stack.getLast(), node)
         this.stack.push(binNode)
       } else if (item.getType() === TokenTypes.Bold) {
-        let node = new Node(NodeTypes.Bold, item.getValue())
+        let node = new MarkDownNode(NodeTypes.Bold, item.getValue())
         this.insertNodeToTree(this.stack.getLast(), node)
       } else if (item.getType() === TokenTypes.Delete) {
-        let node = new Node(NodeTypes.Delete, item.getValue())
+        let node = new MarkDownNode(NodeTypes.Delete, item.getValue())
         this.insertNodeToTree(this.stack.getLast(), node)
       } else if (item.getType() === TokenTypes.NormalString) {
-        let node = new Node(NodeTypes.Span, item.getValue())
+        let node = new MarkDownNode(NodeTypes.Span, item.getValue())
         this.insertNodeToTree(this.stack.getLast(), node)
       } else if (item.getType() === TokenTypes.Head) {
-        let node = new Node(NodeTypes.Head, item.getValue())
+        let node = new MarkDownNode(NodeTypes.Head, item.getValue())
         this.insertNodeToTree(this.stack.getLast(), node)
       }
     })
-    console.log(this.tree)
+    return this.tree
   }
-  insertNodeToTree(stackTopNode: BinNode<Node>, virtualNode: Node) {
-    let node: BinNode<Node>
+  insertNodeToTree(stackTopNode: BinNode<MarkDownNode>, virtualNode: MarkDownNode) {
+    let node: BinNode<MarkDownNode>
     let lc = stackTopNode.getLeft()
     if (!lc) {
       // 若无左孩子，则放到左孩子上
@@ -72,7 +72,7 @@ class NodeParser {
       // 若无右孩子，则放到右孩子最后一个上
       stackTopNode = lc
       while (stackTopNode.getRight()) {
-        stackTopNode = stackTopNode.getRight() as BinNode<Node>
+        stackTopNode = stackTopNode.getRight() as BinNode<MarkDownNode>
       }
       node = this.tree.insertAsRight(stackTopNode, virtualNode)
     }
@@ -80,4 +80,4 @@ class NodeParser {
   }
 }
 
-export { NodeParser }
+export { MarkDownNodeParser, MarkDownNode }

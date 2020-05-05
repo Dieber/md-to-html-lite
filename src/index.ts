@@ -2,7 +2,8 @@
 // import "core-js/fn/array.find"
 // ...
 import { TokenParser } from './TokenParser'
-import { NodeParser } from './NodeParser'
+import { MarkDownNodeParser } from './MarkDownNodeParser'
+import { HTMLParser } from './HtmlParser'
 
 let str = `
 
@@ -19,14 +20,15 @@ let str2 = `
 ### sld
 
 123`
-let parser = new TokenParser(str2)
-console.log(str2)
 
-parser.parseToToken()
-let tokens = parser.getTokens()
+let tokenParser = new TokenParser(str2)
+tokenParser.parseToToken()
+let tokens = tokenParser.getTokens()
 
-let nodeParser = new NodeParser(tokens)
-nodeParser.parseToNode()
+let nodeParser = new MarkDownNodeParser(tokens)
+let tree = nodeParser.parseToNode()
+
+HTMLParser(tree)
 
 // export default {
 //   TokenParser
