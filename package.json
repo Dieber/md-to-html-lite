@@ -121,7 +121,6 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "@types/jsdom": "^16.2.1",
     "jsdom": "^16.2.2"
   }
 }

@@ -6,60 +6,131 @@ import { BinNode, BinTree } from './utils/Tree'
 
 // type MarkDownNode = {
 //   type: NodeTypes
-//   data?: Object
+//   data?: valueObj
 // }
+
+type valueObj = {
+  [key: string]: any
+}
 
 class MarkDownNode {
   private type: NodeTypes
-  private value?: Object
+  private value?: string | valueObj
   getType() {
     return this.type
   }
-  constructor(type: NodeTypes, value?: Object) {
+  getValue() {
+    return this.value
+  }
+  constructor(type: NodeTypes, value?: string | valueObj) {
     this.type = type
     this.value = value
   }
 }
 
 class MarkDownNodeParser {
-  private token: Array<Token>
+  private tokens: Array<Token>
   private tree: BinTree<MarkDownNode>
   private stack: Stack<BinNode<MarkDownNode>>
-  constructor(token: Array<Token>) {
-    this.token = token
+  private curr: number
+  constructor(tokens: Array<Token>) {
+    this.tokens = tokens
     let rootNode: MarkDownNode = new MarkDownNode(NodeTypes.RootNode)
     this.tree = new BinTree<MarkDownNode>(rootNode)
+    this.curr = 0
     this.stack = new Stack<BinNode<MarkDownNode>>()
   }
+  consume() {
+    this.curr++
+  }
+  getCurrentToken(offset?: number) {
+    let curr = offset ? this.curr + offset : this.curr
+    return this.tokens[curr]
+  }
+  visit() {
+    let stack = new Stack<BinNode<MarkDownNode> | null>()
+    stack.push(this.tree.getRoot())
+    while (!stack.isEmpty()) {
+      let top = stack.pop()
+      console.log('left', top!.getData())
+      if (top!.getLeft()) {
+        stack.push(top!.getLeft())
+      }
+      if (top!.getRight()) {
+        console.log('right', top!.getRight()!.getData())
+      }
+    }
+  }
+  // visitMid() {
+  //   let stack = new Stack<BinNode<MarkDownNode> | null>()
+  //   stack.push(this.tree.getRoot())
+  //   while (!stack.isEmpty()) {
+  //     let top = stack.pop()
+  //     if (top!.getLeft()) {
+  //       stack.push(top!.getLeft())
+  //     } else {
+  //       stack.pus
+  //     }
+  //     if (top!.getRight()) {
+  //       console.log('right', top!.getRight()!.getData())
+  //     }
+  //   }
+  // }
   parseToNode() {
     this.stack.push(this.tree.getRoot())
-    this.token.forEach((item: Token) => {
-      if (item.getType() === TokenTypes.NewLine) {
-        // 获取栈顶类型
-        let nodeType = this.stack
-          .getLast()
-          .getData()
-          .getType()
-        if (nodeType === NodeTypes.Paragraph) {
-          this.stack.pop()
+
+    while (this.getCurrentToken().getType() !== TokenTypes.End) {
+      let token = this.getCurrentToken()
+      // console.log(this.stack.getTop().getData())
+      switch (token.getType()) {
+        case TokenTypes.NewLine: {
+          // 若栈顶的类型为之前的段落，则替换掉之前的段落
+          let stackTopType = this.stack
+            .getTop()
+            .getData()
+            .getType()
+          if (stackTopType === NodeTypes.Paragraph) {
+            this.stack.pop()
+          }
+          // 查看后一个Value是否有是Head或其他可以合并Token为一个节点的Token
+          if (this.getCurrentToken(1).getType() === TokenTypes.Head) {
+            let node = new MarkDownNode(NodeTypes.Head, this.getCurrentToken(1).getValue())
+            this.consume()
+            this.consume()
+            this.insertNodeToTree(this.stack.getTop(), node)
+          } else {
+            // console.log(this.stack.getTop())
+            let node = new MarkDownNode(NodeTypes.Paragraph)
+            let binNode = this.insertNodeToTree(this.stack.getTop(), node)
+            console.log(binNode.getData())
+            this.stack.push(binNode) // 栈顶替换新段落
+            this.consume()
+          }
+          break
         }
-        let node = new MarkDownNode(NodeTypes.Paragraph)
-        let binNode = this.insertNodeToTree(this.stack.getLast(), node)
-        this.stack.push(binNode)
-      } else if (item.getType() === TokenTypes.Bold) {
-        let node = new MarkDownNode(NodeTypes.Bold, item.getValue())
-        this.insertNodeToTree(this.stack.getLast(), node)
-      } else if (item.getType() === TokenTypes.Delete) {
-        let node = new MarkDownNode(NodeTypes.Delete, item.getValue())
-        this.insertNodeToTree(this.stack.getLast(), node)
-      } else if (item.getType() === TokenTypes.NormalString) {
-        let node = new MarkDownNode(NodeTypes.Span, item.getValue())
-        this.insertNodeToTree(this.stack.getLast(), node)
-      } else if (item.getType() === TokenTypes.Head) {
-        let node = new MarkDownNode(NodeTypes.Head, item.getValue())
-        this.insertNodeToTree(this.stack.getLast(), node)
+        case TokenTypes.Bold: {
+          let node = new MarkDownNode(NodeTypes.Bold, token.getValue())
+          this.insertNodeToTree(this.stack.getTop(), node)
+          this.consume()
+          break
+        }
+        case TokenTypes.Delete: {
+          let node = new MarkDownNode(NodeTypes.Delete, token.getValue())
+          this.insertNodeToTree(this.stack.getTop(), node)
+          this.consume()
+          break
+        }
+        case TokenTypes.NormalString: {
+          let node = new MarkDownNode(NodeTypes.Span, token.getValue())
+          this.insertNodeToTree(this.stack.getTop(), node)
+          this.consume()
+          break
+        }
+        default: {
+          console.log('fuck', this.getCurrentToken().getType())
+        }
       }
-    })
+    }
     return this.tree
   }
   insertNodeToTree(stackTopNode: BinNode<MarkDownNode>, virtualNode: MarkDownNode) {

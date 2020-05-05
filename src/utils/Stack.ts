@@ -6,8 +6,11 @@ class Stack<T> {
   pop() {
     return this.elems.pop()
   }
-  getLast() {
+  getTop() {
     return this.elems[this.elems.length - 1]
+  }
+  isEmpty() {
+    return this.elems.length === 0
   }
 }
 

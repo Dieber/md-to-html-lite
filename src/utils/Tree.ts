@@ -35,13 +35,13 @@ class BinTree<T> {
   }
   insertAsLeft(node: BinNode<T>, data: T) {
     this.count++
-    node.insertAsLeft(data)
-    return node
+    let lnode = node.insertAsLeft(data)
+    return lnode
   }
   insertAsRight(node: BinNode<T>, data: T) {
     this.count++
-    node.insertAsRight(data)
-    return node
+    let rNode = node.insertAsRight(data)
+    return rNode
   }
 }
 

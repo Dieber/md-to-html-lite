@@ -5,9 +5,7 @@ import { TokenParser } from './TokenParser'
 import { MarkDownNodeParser } from './MarkDownNodeParser'
 import { HTMLParser } from './HtmlParser'
 
-let str = `
-
-### sld
+let str = `### sld
 
 123** vhhef  **  123123 0 s**kdfjlkvd
 
@@ -15,20 +13,23 @@ getBlock###
 
 **543**~~吼吼~~k1*~***~~*~~`
 
-let str2 = `
+let str2 = `### sld
 
-### sld
+123
 
-123`
-
-let tokenParser = new TokenParser(str2)
-tokenParser.parseToToken()
-let tokens = tokenParser.getTokens()
-
+## 567##`
+let parser = new TokenParser(str2)
+parser.parseToToken()
+let tokens = parser.getTokens()
 let nodeParser = new MarkDownNodeParser(tokens)
-let tree = nodeParser.parseToNode()
+let node = nodeParser.parseToNode()
 
-HTMLParser(tree)
+// nodeParser.visit()
+
+// console.dir(node)
+let html = HTMLParser(node)
+
+console.log(html)
 
 // export default {
 //   TokenParser

@@ -1,12 +1,19 @@
 import { isNewLine } from './utils/is'
 import { TokenTypes } from './utils/types'
 // 词法分析阶段
+
+type valueObj = {
+  [key: string]: any
+}
+
 class Token {
   private type: TokenTypes
-  private value?: string | Object
-  constructor(type: TokenTypes, value?: string | Object) {
+  private value?: string | valueObj
+  constructor(type: TokenTypes, value?: string | valueObj) {
     this.type = type
-    this.value = value
+    if (value) {
+      this.value = value
+    }
   }
   getType() {
     return this.type
@@ -43,6 +50,8 @@ class TokenParser {
         this.getNormalStringToken()
       }
     }
+
+    this._tokens.push(new Token(TokenTypes.End))
   }
   getChar(offset = 0) {
     return this._input[this._pos + offset]
@@ -68,7 +77,7 @@ class TokenParser {
       this._tokens.push(
         new Token(TokenTypes.Head, {
           level: count,
-          string: str
+          text: str
         })
       )
     }
@@ -122,6 +131,9 @@ class TokenParser {
       this.getHeadToken()
     }
   }
+  // 有两种模式消耗字符
+  // 1:若不传参，则按照如果碰到一些标识而停止
+  // 2:传参：则直接从标志位生成div
   getNormalStringToken(directStart?: number, directEnd?: number) {
     if (directStart !== undefined && directEnd !== undefined) {
       let str = ''

@@ -3,7 +3,8 @@ enum TokenTypes {
   NormalString,
   NewLine,
   Delete,
-  Head
+  Head,
+  End
 }
 
 enum NodeTypes {
