@@ -1,4 +1,4 @@
-class Stack<T> {
+class Stack<T = any> {
   private elems: Array<T> = []
   push(elem: T) {
     this.elems.push(elem)
@@ -6,8 +6,11 @@ class Stack<T> {
   pop() {
     return this.elems.pop()
   }
-  getLast() {
+  getTop() {
     return this.elems[this.elems.length - 1]
+  }
+  isEmpty() {
+    return this.elems.length === 0
   }
 }
 

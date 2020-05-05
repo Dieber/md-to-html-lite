@@ -1,10 +1,15 @@
 import { isNewLine } from './utils/is'
 import { TokenTypes } from './utils/types'
 // 词法分析阶段
+
+type valueObj = {
+  [key: string]: any
+}
+
 class Token {
   private type: TokenTypes
-  private value?: string | Object
-  constructor(type: TokenTypes, value?: string | Object) {
+  private value?: string | valueObj
+  constructor(type: TokenTypes, value?: string | valueObj) {
     this.type = type
     this.value = value
   }
