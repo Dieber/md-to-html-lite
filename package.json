@@ -1,11 +1,11 @@
 {
-  "name": "awesome-markdown2html",
-  "version": "0.0.0",
+  "name": "md-to-html-lite",
+  "version": "0.0.1",
   "description": "",
   "keywords": [],
-  "main": "dist/awesome-markdown2html.umd.js",
-  "module": "dist/awesome-markdown2html.es5.js",
-  "typings": "dist/types/awesome-markdown2html.d.ts",
+  "main": "dist/md-to-html-lite.umd.js",
+  "module": "dist/md-to-html-lite.es5.js",
+  "typings": "dist/types/md-to-html-lite.d.ts",
   "files": [
     "dist"
   ],

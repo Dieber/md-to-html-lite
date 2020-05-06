@@ -18,7 +18,7 @@ let str2 = `### sld
 123
 
 ## 567##`
-let parser = new TokenParser(str2)
+let parser = new TokenParser(str)
 parser.parseToToken()
 let tokens = parser.getTokens()
 let nodeParser = new MarkDownNodeParser(tokens)

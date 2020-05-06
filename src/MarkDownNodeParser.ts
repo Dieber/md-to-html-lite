@@ -99,7 +99,6 @@ class MarkDownNodeParser {
             this.consume()
             this.insertNodeToTree(this.stack.getTop(), node)
           } else {
-            // console.log(this.stack.getTop())
             let node = new MarkDownNode(NodeTypes.Paragraph)
             let binNode = this.insertNodeToTree(this.stack.getTop(), node)
             console.log(binNode.getData())
@@ -125,9 +124,6 @@ class MarkDownNodeParser {
           this.insertNodeToTree(this.stack.getTop(), node)
           this.consume()
           break
-        }
-        default: {
-          console.log('fuck', this.getCurrentToken().getType())
         }
       }
     }

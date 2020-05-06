@@ -7,7 +7,7 @@ import json from 'rollup-plugin-json'
 
 const pkg = require('./package.json')
 
-const libraryName = 'awesome-markdown2html'
+const libraryName = 'md-to-html-lite'
 
 export default {
   input: `src/index.ts`,
