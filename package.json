@@ -1,6 +1,6 @@
 {
   "name": "md-to-html-lite",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "keywords": [],
   "main": "dist/md-to-html-lite.umd.js",
