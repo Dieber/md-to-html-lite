@@ -52,12 +52,11 @@ class MarkDownNodeParser {
     stack.push(this.tree.getRoot())
     while (!stack.isEmpty()) {
       let top = stack.pop()
-      console.log('left', top!.getData())
       if (top!.getLeft()) {
         stack.push(top!.getLeft())
       }
       if (top!.getRight()) {
-        console.log('right', top!.getRight()!.getData())
+        // console.log('right', top!.getRight()!.getData())
       }
     }
   }
@@ -101,7 +100,6 @@ class MarkDownNodeParser {
           } else {
             let node = new MarkDownNode(NodeTypes.Paragraph)
             let binNode = this.insertNodeToTree(this.stack.getTop(), node)
-            console.log(binNode.getData())
             this.stack.push(binNode) // 栈顶替换新段落
             this.consume()
           }
